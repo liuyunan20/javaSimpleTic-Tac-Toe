@@ -1,64 +1,76 @@
 package tictactoe;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
     final static Scanner scanner = new Scanner(System.in);
+    private static char[][] myBoard = new char[3][3];
     public static void main(String[] args) {
         String boardSymbols = scanner.next();
-        printBoard(boardSymbols);
-        String result = checkResult(boardSymbols);
-        System.out.println(result);
+        myBoard = initializeBoard(boardSymbols);
+        printBoard();
+        getInput();
+        printBoard();
+        // String result = checkResult();
+        // System.out.println(result);
     }
-    static void printBoard(String symbols) {
+
+    static char[][] initializeBoard(String symbols) {
+        char [][] board = new char[3][3];
+        for (int i = 0; i <3; i++) {
+            board[i] = symbols.substring(3 * i, 3 * i + 3).toCharArray();
+        }
+        return board;
+    }
+    static void printBoard() {
         String dashes = "---------";
         System.out.println(dashes);
         for (int i = 0; i < 3; i++) {
-            String line = "| ";
+            System.out.print("| ");
             for (int j = 0; j < 3; j++) {
-                line = line + symbols.charAt(j + 3 * i) + " ";
+                System.out.print(myBoard[i][j] + " ");
             }
-            line += "|";
-            System.out.println(line);
+            System.out.print("|\n");
         }
         System.out.println(dashes);
     }
 
-    static String checkResult(String symbols) {
+    static String checkResult() {
         int numX = 0, numO = 0;
-        for (int i = 0; i < 9; i++) {
-            if (symbols.charAt(i) == 'X') {
-                numX++;
-            } else if (symbols.charAt(i) == 'O') {
-                numO++;
+        boolean boardNotFull = false;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (myBoard[i][j] == 'X') {
+                    numX++;
+                } else if (myBoard[i][j] == 'O') {
+                    numO++;
+                } else if (myBoard[i][j] == '_') {
+                    boardNotFull = true;
+                }
             }
         }
         if (numO - numX > 1 || numX - numO > 1) {
             return "Impossible";
         }
-        boolean boardNotFull = symbols.contains("_");
         char [] winPatternX = {'X', 'X', 'X'};
         char [] winPatternO = {'O', 'O', 'O'};
         boolean xWin = false, oWin  = false;
-        char [][] board = new char[3][3];
         for (int i = 0; i <3; i++) {
-            board[i] = symbols.substring(3 * i, 3 * i + 3).toCharArray();
-        }
-        for (int i = 0; i <3; i++) {
-            if (Arrays.equals(board[i], winPatternX)) {
+            if (Arrays.equals(myBoard[i], winPatternX)) {
                  xWin = true;
-            } else if (Arrays.equals(board[i], winPatternO)) {
+            } else if (Arrays.equals(myBoard[i], winPatternO)) {
                 oWin = true;
             }
-            char [] column = {board[0][i], board[1][i], board[2][i]};
+            char [] column = { myBoard[0][i], myBoard[1][i], myBoard[2][i]};
             if (Arrays.equals(column, winPatternX)) {
                 xWin = true;
             } else if (Arrays.equals(column, winPatternO)) {
                 oWin = true;
             }
         }
-        char [] diagonal1 = {board[0][0], board[1][1], board[2][2]};
-        char [] diagonal2 = {board[0][2], board[1][1], board[2][0]};
+        char [] diagonal1 = {myBoard[0][0], myBoard[1][1], myBoard[2][2]};
+        char [] diagonal2 = {myBoard[0][2], myBoard[1][1], myBoard[2][0]};
         if (Arrays.equals(diagonal1, winPatternX) || Arrays.equals(diagonal2, winPatternX)) {
             xWin = true;
         } else if (Arrays.equals(diagonal1, winPatternO) || Arrays.equals(diagonal2, winPatternO)) {
@@ -74,6 +86,25 @@ public class Main {
             return "Game not finished";
         }
         return "Draw";
+    }
+    static void getInput() {
+        while (true) {
+            try {
+                int coo1 = scanner.nextInt();
+                int coo2 = scanner.nextInt();
+                if (coo1 > 3 || coo1 < 1 || coo2 > 3 || coo2 < 1) {
+                    System.out.println("coordinates should be from 1 to 3!");
+                    continue;
+                }
+                if (myBoard[coo1 - 1][coo2 - 1] == '_') {
+                    myBoard[coo1 - 1][coo2 - 1] = 'X';
+                    break;
+                }
+                System.out.println("This cell is occupied! Choose another one!");
+            } catch (InputMismatchException e) {
+                System.out.println("You should enter numbers");
+            }
+        }
     }
 }
 
