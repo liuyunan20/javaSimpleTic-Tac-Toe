@@ -7,19 +7,28 @@ public class Main {
     final static Scanner scanner = new Scanner(System.in);
     private static char[][] myBoard = new char[3][3];
     public static void main(String[] args) {
-        String boardSymbols = scanner.next();
-        myBoard = initializeBoard(boardSymbols);
+        myBoard = initializeBoard();
         printBoard();
-        getInput();
-        printBoard();
-        // String result = checkResult();
-        // System.out.println(result);
+        String result = checkResult();
+        char curPiece = 'X';
+        while (result.equals("Game not finished")) {
+            move(curPiece);
+            printBoard();
+            result = checkResult();
+            switch (curPiece) {
+                case 'X' -> curPiece = 'O';
+                case 'O' -> curPiece = 'X';
+            }
+        }
+        System.out.println(result);
     }
 
-    static char[][] initializeBoard(String symbols) {
+    static char[][] initializeBoard() {
         char [][] board = new char[3][3];
         for (int i = 0; i <3; i++) {
-            board[i] = symbols.substring(3 * i, 3 * i + 3).toCharArray();
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = '_';
+            }
         }
         return board;
     }
@@ -87,22 +96,22 @@ public class Main {
         }
         return "Draw";
     }
-    static void getInput() {
+    static void move(char piece) {
         while (true) {
             try {
                 int coo1 = scanner.nextInt();
                 int coo2 = scanner.nextInt();
                 if (coo1 > 3 || coo1 < 1 || coo2 > 3 || coo2 < 1) {
-                    System.out.println("coordinates should be from 1 to 3!");
+                    System.out.println("Coordinates should be from 1 to 3!");
                     continue;
                 }
                 if (myBoard[coo1 - 1][coo2 - 1] == '_') {
-                    myBoard[coo1 - 1][coo2 - 1] = 'X';
+                    myBoard[coo1 - 1][coo2 - 1] = piece;
                     break;
                 }
                 System.out.println("This cell is occupied! Choose another one!");
             } catch (InputMismatchException e) {
-                System.out.println("You should enter numbers");
+                System.out.println("You should enter numbers!");
             }
         }
     }
